@@ -1,15 +1,20 @@
-#Pastas de caches e compilção Python
-__pycache__
-*.py[cod]
-*$.pyclass
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
 
-#Ambientes Virtuais
-venv/
-env/
-ENV/
+# Virtual environments
+.venv
 
-#Configuração do editor VS code
-.vscode/
-
-#Arquivos de variáveis de ambientes
+### dotenv ###
 .env
+
+### direnv ###
+.direnv
+.envrc
+
+ENV/
+env/

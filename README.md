@@ -1,8 +1,8 @@
-﻿# ds1-teste-ex
+# sala-etec
 
 # Projeto 
 
-**Etec Virtual**
+**Sala ETEC**
 
 ## Nome da Empresa
 
@@ -10,12 +10,12 @@
 
 ## Integrantes
 
-**Douglas Almeida da Cruz
-	Kelly dos Santos Lima 
-	Leonardo Araujo de Andrade
-	Maria Clara Silva Nunes de Lima
-	Matheus Silva de Moura
-	Michael Kyle da Silva**
+- **Douglas Almeida da Cruz**
+-	**Kelly dos Santos Lima**
+-	**Leonardo Araujo de Andrade**
+-	**Maria Clara Silva Nunes de Lima**
+-	**Matheus Silva de Moura**
+-	**Michael Kyle da Silva**
 
 ## Nome do Sistema
 
@@ -80,12 +80,14 @@ Disponibilizar uma plataforma online para organização e compartilhamento de co
 
 * HTML
 * CSS
-* Bootstrap
+* Bulma
 * JavaScript
 
 **Banco de Dados**
 
 * MySQL
+
+![DER](/docs/DER.png)
 
 ---
 
