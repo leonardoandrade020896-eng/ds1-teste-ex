@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+   <div class="container">
+    <h1>Sistema Back-End</h1>
+    <p>Projeto Pratico de DSI</p>
+    <hr>
+    <div class="cards-grid">
+        <div class="card">
+            <h3>Total de Itens</h3>
+            <p class="numero">{{ total }}</p>
+        </div>
+        <div class="card">
+            <h3>Faturamento</h3>
+            <p class="numero">R$ {{ "%.2f" | format(faturamento) }}</p>
+        </div>
+        <div class="card">
+            <h3>Concluidos</h3>
+            <p class="numero">{{ concluidos }}</p>
+        </div>
+    </div>
+    <form action="/" method="get" class="search-form">
+        <input type="text" name="busca" placeholder="Pesquisar por...">
+        <button class="submit">Buscar</button>
+        {% if busca %}
+            <a href="/" class="btn-clear">Limpar Busca</a>
+        {% endif %}
+    </form>
+    <a href="/cadastro" class="btn">Abrir formulario</a>
+
+    <h2>Registro do Sistema</h2>
+    
+    {# Correção: 'length' com 'g' e 'th' em vez de 'tr' no cabeçalho #}
+    {% if cadastro | length == 0 %}
+        <p><em>Nenhum registro encontrado</em></p>
+    {% else %}
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Nome</th>
+                    <th>Informações</th>
+                    <th>Valor (R$)</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cadastros %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ item.nome }}</td>
+                    <td>{{ item.info }}</td>
+                    
+                    <!-- Correção no fechamento das aspas do filtro de formatação -->
+                    <td>R$ {{ "%.2f" | format(item.valor) }}</td>
+                    
+                    <td>
+                        <span class="badge {{ 'badge-success' if item.status == 'Concluido' else 'badge-secondary' }}">
+                            {{ item.status }}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="/mudar-status/{{ loop.index0 }}" class="btn-action">Mudar Status</a>
+                        <a href="/excluir/{{ loop.index0 }}" class="btn-danger" onclick="return confirm('Deseja Excluir?')">Excluir</a>
+                    </td>
+                </tr>
+                {% endfor %} <!-- Correção: faltava o '%' -->
+            </tbody>
+        </table>
+    {% endif %} <!-- Correção: faltava o '%' -->
+   </div>
+</body>
+</html>
