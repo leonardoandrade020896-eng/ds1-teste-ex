@@ -13,3 +13,7 @@ ENV/
 
 #Arquivos de variáveis de ambientes
 .env
+
+# Banco de Dafos local SQLite e pastas do flask
+*.db
+instance/
