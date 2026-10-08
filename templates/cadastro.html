@@ -1,29 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>cadastro</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-    <div class="container">
-        <h2>Novo cadastro</h2>
-        <form action="/salvar" method="post">
-            <label for="campo_nome">Nome Principal</label>
-            <input type="text" id="campo_nome" name="campo_nome" required>
+{% extends "base.html" %}
+{% block title %}Novo Registro{% endblock %}
 
-            <label for="campo_info">Informações:</label>
-            <input type="text" id="campo_info" name="campo_info" required>
+{% block content %}
+    <h2>Novo Cadastro de Imagem</h2>
 
-            <label>Valor</label>
-            <input type="number" step="0.01" name="campo_valor" placeholder="0.00" required>
+    <form action="/salvar" method="post" enctype="multipart/form-data">
 
-            <button type="submit">Salvar</button>
-        </form>
+        <label>Nome / Titulo:</label>
+        <input type="text" name="campo_nome" required />
 
-        <hr>
-        <a href="/">Voltar para a página anterior</a>
-    </div>
-</body>
-</html>
+        <label>Informações Complementares:</label>
+        <input type="text" name="campo_info" required />
+
+        <label>Categorias:</label>
+        <select name="campo_categoria" required>
+            <option value="">Selecione uma categoria</option>
+            {% for cat in categorias %}
+                <option value="{{ cat.id }}">{{ cat.nome }}</option>
+            {% endfor %}
+        </select>
+
+
+        <label>Valor / Preço (R$):</label>
+        <input type="number" name="campo_valor" step="0.01" placeholder="0.00" required />
+
+        <label>Imagem / Foto:</label>
+        <input type="file" name="campo_imagem" accept="image/*" />
+
+        <button type="submit">Salvar Registro</button>
+    </form>
+    {% endlock %}
+

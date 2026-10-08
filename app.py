@@ -1,100 +1,40 @@
-from flask import Flask, render_template, request, redirect
+import os
+
+from flask import Flask
+
+from database import db
+from routes import main_bp
 
 # Instancia do servidor do Flask
 app = Flask(__name__)
-lista_de_cadastros = []
-
-#Rota 1: Pagina inicial (home) calcular métricas, 
-@app.route("/")
-def home():
-    
-    # 1 capturar termo digitado no campo de busca GET
-    busca = request.args.get("busca", "").strip().lower()
-    
-    #2 filtra a lista se houver busca digitada
-    if busca:
-        registro_filtrados = [item for item in lista_de_cadastros if busca in item["name"].lower()]
-    else:
-        registro_filtrados = lista_de_cadastros
-        
-    
-    # 3 Calculo de métrica / indicadores (Cads Home)
-    total_registro = len(lista_de_cadastros)
-    total_faturamento = sum(item["valor"]for item in lista_de_cadastros)
-    total_concluidos = sum(1 for item in lista_de_cadastros if item ["status"] == "Concluído")
-    
-    
-    # 4 Enviar os indicadores para o index.html
-    return render_template(
-        "index.html",
-        cadastro=registro_filtrados,
-        total=total_registro,
-        faturamento=total_faturamento,
-        concluidos=total_concluidos,
-    )
 
 
-#  Rota 4: Alterar status
-@app.route("/mudar-status/<int:indice>")
-def mudar_status(indice):
-    if 0 <= indice < len(lista_de_cadastros):
-        # alterar o status entre "pendente"e "concluido"
-        if lista_de_cadastros[indice]["status"] == "Pendente":
-            lista_de_cadastros[indice]["status"] == "Concluído"
-        else:
-                lista_de_cadastros[indice]["status"] == "Pendente"
+# Configuração do banco de dados
+app.config['SQLALCHEMY_DATABASE_URL'] = 'sqlite:///banco.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SECRET_KEY'] = 'chave_secreta_etec_ds1_2026'
 
-    return redirect("/")
+# Configuração para receber os uploads
+app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'static', 'uploads')
 
+# Configuração para limitar o tamanho máximo do arquivo de upload (5 MB)
+app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024
 
-# Rota 5: Excluir registro
-@app.route("/excluir/<int:indice>")
-def excluir_cadastro(indice):
-    if 0<= indice <len(lista_de_cadastros):
-        lista_de_cadastros.pop(indice)
-    return redirect("/")
+# Inicializa a instancia do banco de dados com a aplicação Flask
+db.init_app(app)
 
+# Registra o blueprint principal da aplicação
+app.register_blueprint(main_bp)
 
-#Rota 2: Exibição da tela de cadastro Método (GET)
-@app.route('/cadastro')
-def pagina_cadastro():
-    return render_template("cadastro.html")
+# Cria automaticamente a pasta de upload caso não exista
+with app.app_context():
+    # Cria a pasta de upload caso não exista
+    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
-#Rota 3:Processamento dos dados Método (POST)
-@app.route('/salvar', methods=["POST"])
-def salvar_cadastro():
-        
-    nome = request.form.get("campo_nome", "").strip()
-    info = request.form.get("campo_info", "").strip()
-    valor_str = request.form.get("campo_valor", "0").strip()
-    
-       # validaçao 1: tratar a conversão de valor numerico
-    try:
-        valor = float(valor_str)
-        if valor <=0:
-            raise ValueError
-    except ValueError:
-        return"<h3>Erro 400: O valor deve ser um valor maior que zero!<h3><br>< a href='/index'>Voltar ao formulario</a>", 400
-
-    # validaçao 2: verifica se os campos obrigatorios vieram vazios
-    if not nome or not info:
-        return "<h3>Erro 400: Preencha todos os campos obrigatórios do formulario<h3><br><a href='/index'>Voltar ao formulário</a>", 400
-
-    #Criação da estrutura de dados
-    novo_registro = {
-        "nome": nome,
-        "info": info,
-        "valor": valor,
-        "status": "Pendente" #status sempre inicia como pendente
-    }
-
-    lista_de_cadastros.append(novo_registro)
-
-    # redirecionar para a home (padrao post-redirect-get)
-    return redirect("/")
-
-    return render_template("resultado.html", campo_nome=nome, campo_info=info, campo_valor=valor)
+    # Cria as tabelas do banco de dados caso não existam
+    db.create_all()
 
 
+# Inicia o servidor Flask
 if __name__ == '__main__':
     app.run(debug=True)

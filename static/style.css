@@ -122,3 +122,12 @@ th {
 }
  
 hr { border: 0; height: 1px; background: #e0e0e0; margin: 20px 0; }
+
+/* Estilização da Miniatura de Imagem na Tabela */
+.img-thumb {
+    width: 45px;
+    height: 45px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+}

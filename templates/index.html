@@ -1,86 +1,68 @@
-<!DOCTYPE html>
-<html lang="pt-br">
+{extends 'base.html' %} 
+{% block title %}Dashboard - Meu Sistema{% endblock %} 
+{% block content %}
+    <h1>Dashboard e Registro</h1>
+    <hr>
 
-<head>
-    <meta charset="UTF-8">
-    <title>Página Inicial - Dashboard</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
+    {% include 'components/cards.html' %}
 
-<body>
-    <div class="container">
-        <h1>Dashboard e Registros</h1>
-        <a href="/cadastro" class="btn">+ Novo Cadastro</a>
-        <hr>
+    <hr>
+    <form action="/" method="get" class="search-form">
+        <input type="text" name="busca" placeholder="Pesquisar por nome..." value="{{ busca }}">
+        
+        <select name="Categoria_id" onchange="this.form.submit()">
+            <option value="">-- Todas as Categorias --</option>
+            {% for cat in categorias %}
+                <option value="{{ cat.id }}" {% 'selected' if categoria_selecionada == cat.id %}>{{ cat.nome }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Filtrar</button>
+        {% if busca or categoria_selecionada %}
+            <a href="/" class="btn-clear">Limpar Filtros</a>
+        {% endif %}
+    </form>
 
-        <!-- CARDS DE MÉTRICAS -->
-        <div class="cards-grid">
-            <div class="card">
-                <h3>Total de Itens</h3>
-                <p class="numero">{{ total }}</p>
-            </div>
-            <div class="card">
-                <h3>Faturamento</h3>
-                <p class="numero">R$ {{ "%.2f"|format(faturamento) }}</p>
-            </div>
-            <div class="card">
-                <h3>Concluídos</h3>
-                <p class="numero">{{ concluidos }}</p>
-            </div>
-        </div>
+    <h2>Registros do Banco de Dados</h2>
 
-        <hr>
-
-        <!-- FORMULÁRIO DE BUSCA -->
-        <form action="/" method="GET" class="search-form">
-            <input type="text" name="busca" placeholder="Pesquisar por nome..." value="{{ busca }}">
-            <button type="submit">Buscar</button>
-            {% if busca %}
-            <a href="/" class="btn-clear">Limpar Busca</a>
-            {% endif %}
-        </form>
-
-        <h2>Registros do Banco de Dados:</h2>
-
-        {% if cadastros|length == 0 %}
-        <p><em>Nenhum registro encontrado no banco.</em></p>
-        {% else %}
+    {% if cadastros|length == 0 %}
+        <p><em>Nenhum registro encontrado.</em></p>
+    {% else %}
         <table>
             <thead>
                 <tr>
-                    <th>ID (PK)</th>
-                    <th>Nome</th>
+                    <th>Foto</th>
+                    <th>ID</th>
                     <th>Informação</th>
+                    <th>Categoria</th>
                     <th>Valor (R$)</th>
-                    <th>Status</th>
                     <th>Ações</th>
+                    <th>Status</th>
                 </tr>
             </thead>
             <tbody>
                 {% for item in cadastros %}
-                <tr>
-                    <!-- Exibe o ID real gerado como chave primária do banco -->
-                    <td>{{ item.id }}</td>
-                    <td>{{ item.nome }}</td>
-                    <td>{{ item.info }}</td>
-                    <td>R$ {{ "%.2f"|format(item.valor) }}</td>
-                    <td>
-                        <span class="badge {{ 'badge-success' if item.status == 'Concluído' else 'badge-warning' }}">
+                    <tr>
+                        <td>
+                            <img src="{{ url_for('static', filename='uploads/' + item.imagem) }}" alt="{{ item.nome }}" class="img-thumb">
+                        </td>
+                        <td>{{ item.id }}</td>
+                        <td>{{ item.nome }}</td>
+                        <td><span class="badge-cat">{{ item.categoria.nome }}</span></td>
+                        <td>{{ item.info }}</td>
+                        <td>R$ {{ "%.2f"|format(item.valor) }}</td>
+                        <td>
+                            <span class="badge {{'badge-success' if item.status == 'Concluido' else 'badge-warning'}}">
                             {{ item.status }}
                         </span>
-                    </td>
-                    <td>
-                        <!-- Passa o ID único do banco para a rota de alteração e exclusão -->
-                        <a href="/mudar-status/{{ item.id }}" class="btn-action">Mudar Status</a>
-                        <a href="/excluir/{{ item.id }}" class="btn-danger"
-                            onclick="return confirm('Deseja excluir do banco de dados?')">Excluir</a>
-                    </td>
-                </tr>
-                {% endfor %}
+                        </td>
+                        <td>
+                            <a href="/editar/{{ item.id }}" class="btn-edit">Editar</a>
+                            <a href="/excluir/{{ item.id }}" class="btn-delete" onclick="return confirm('Tem certeza que deseja excluir este registro?');">Excluir</a>
+                    </tr>
             </tbody>
+                    
         </table>
-        {% endif %}
-    </div>
-</body>
 
-</html>
+
+
+

@@ -17,3 +17,7 @@ ENV/
 # Banco de Dafos local SQLite e pastas do flask
 *.db
 instance/
+
+# Arquivos enviados pelo usuário em ambiente de desenvolvimento
+static/uploads/*
+!static/uploads/.gitkeep
