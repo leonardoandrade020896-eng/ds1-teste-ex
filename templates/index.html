@@ -60,9 +60,12 @@
                             <a href="/excluir/{{ item.id }}" class="btn-delete" onclick="return confirm('Tem certeza que deseja excluir este registro?');">Excluir</a>
                         </td>
                     </tr>
+                {% endfor % }
             </tbody>
                     
         </table>
+    {% endif %}
+{% endblock %}
 
 
 
